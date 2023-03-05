@@ -53,10 +53,10 @@ class ChatGPT:
             user['parent_id'] = resp["parent_id"]
             # print(resp)
             message_ = resp["message"]
-            log.info('ChatGPT：' + message_)
+            log.info(f'ChatGPT：{message_}')
             return message_
 
-        log.critical("故障排查: ", resp)
+        log.critical(f"故障排查: {resp}")
         return ""
 
     @retry(retry_on_exception=is_error, stop_max_attempt_number=3)
