@@ -2,12 +2,13 @@ import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from BingChat import BingChat
 from ChatGPT import ChatGPT
 
 app = FastAPI()
 chatGPT = ChatGPT()
-bingChat = BingChat()
+
+
+# bingChat = BingChat()
 
 
 class Item(BaseModel):
