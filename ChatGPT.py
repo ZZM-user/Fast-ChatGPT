@@ -66,7 +66,7 @@ class ChatGPT:
                     prompt, user['conversation_id'], user['parent_id']
             ):
                 # 流式的 1->12->123
-                log.debug(data)
+                log.trace(data["message"])
                 resp = data
         except Error as e:
             if e.code == 2:
