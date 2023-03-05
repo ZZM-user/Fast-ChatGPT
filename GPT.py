@@ -46,7 +46,7 @@ class ChatGPT:
         # 中间写代码块
         resp = self.request(user, prompt)
         end = timeit.default_timer()
-        log.debug('Running time: %s Seconds' % (end - start))
+        log.debug('Running time: %s Seconds' % round(end - start, 3))
 
         if resp["conversation_id"]:
             user['conversation_id'] = resp["conversation_id"]
