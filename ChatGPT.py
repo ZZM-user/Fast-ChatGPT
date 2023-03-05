@@ -41,7 +41,7 @@ class ChatGPT:
         end = timeit.default_timer()
         log.debug('Running time: {:.2f} Seconds'.format(end - start))
 
-        if resp["conversation_id"]:
+        if resp and resp["conversation_id"]:
             user['conversation_id'] = resp["conversation_id"]
             user['parent_id'] = resp["parent_id"]
             # print(resp)
