@@ -21,9 +21,10 @@ async def talk(
 ):
     item.prompt = item.prompt.strip()
     print(item)
-    
+
     if item.prompt.startswith("bing"):
         prompt = item.prompt.removeprefix("bing")
+        print(prompt)
         answer = bingChat.talk(prompt)
     else:
         answer = chatGPT.talk(item.sender, item.prompt)
