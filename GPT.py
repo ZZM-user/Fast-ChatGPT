@@ -1,16 +1,28 @@
+import timeit
 import uuid
-from copy import deepcopy
+from ssl import SSLEOFError
 
-from revChatGPT.V1 import Chatbot, Error
+from nb_log import get_logger
+from retrying import retry
+from revChatGPT.V1 import Error, AsyncChatbot
+
+log = get_logger("GPT")
+
+
+# 判断错误
+def is_error(exception):
+    log.debug("判断异常", exception)
+    print(isinstance(exception, (SSLEOFError, IOError, ConnectionError)))
+    return isinstance(exception, (SSLEOFError, IOError, ConnectionError))
 
 
 class ChatGPT:
-    userSet = {}
-    userDict = {'conversation_id': None, 'parent_id': None}
-    chatbot = Chatbot(config={
+    _userSet = {}
+    _userDict = {'conversation_id': None, 'parent_id': None}
+    _chatbot = AsyncChatbot(config={
         "email": "z2657272578@gmail.com",
         "password": "ZJL20010516",
-        "proxy": "127.0.0.1:7890",
+        "proxy": "http://127.0.0.1:7890",
         # "paid": True
         # "email": "372551896@qq.com",
         # "password": "xlh981010"
@@ -22,36 +34,53 @@ class ChatGPT:
             prompt: str
     ) -> str:
 
-        if sender not in self.userSet:
-            copy = deepcopy(self.userDict.copy())
-            self.chatbot.conversation_id = None
-            self.chatbot.parent_id = str(uuid.uuid4())
-            self.userSet[sender] = deepcopy(copy)
+        if sender not in self._userSet:
+            copy = self._userDict.copy()
+            self._chatbot.conversation_id = None
+            self._chatbot.parent_id = str(uuid.uuid4())
+            self._userSet[sender] = copy
 
-        user = self.userSet.get(sender)
+        user = self._userSet.get(sender)
+
+        start = timeit.default_timer()
+        # 中间写代码块
+        resp = self.request(user, prompt)
+        end = timeit.default_timer()
+        log.debug('Running time: %s Seconds' % (end - start))
+
+        if resp["conversation_id"]:
+            user['conversation_id'] = resp["conversation_id"]
+            user['parent_id'] = resp["parent_id"]
+            # print(resp)
+            message_ = resp["message"]
+            log.info('ChatGPT：' + message_)
+        else:
+            log.critical("故障排查: ", resp)
+            return ""
+
+    @retry(retry_on_exception=is_error, stop_max_attempt_number=3)
+    def request(
+            self,
+            user: dict,
+            prompt: str):
 
         try:
             resp = ''
-            for data in self.chatbot.ask(
+            for data in self._chatbot.ask(
                     prompt, user['conversation_id'], user['parent_id']
             ):
                 # 流式的 1->12->123
                 resp = data
         except Error as e:
             if e.code == 2:
-                print("频率限制", e)
+                log.warning("频率限制", e)
                 return "我被限制了哦，你可以等一个小时后再来"
         except Exception as e:
             print('ChatGPT：我坏了', e)
-            return ""
+            log.critical("严重故障: ", e)
+            raise e
 
-        user['conversation_id'] = deepcopy(resp["conversation_id"])
-        user['parent_id'] = deepcopy(resp["parent_id"])
-        self.userSet[sender] = deepcopy(user)
-        # print(resp)
-        message_ = resp["message"]
-        print('ChatGPT：' + message_)
-        return message_
+        return resp
 
 
 if __name__ == '__main__':
