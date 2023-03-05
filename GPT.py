@@ -46,7 +46,7 @@ class ChatGPT:
         # 中间写代码块
         resp = self.request(user, prompt)
         end = timeit.default_timer()
-        log.debug('Running time: %s Seconds' % round(end - start, 3))
+        log.debug('Running time: {:.2f} Seconds'.format(end - start))
 
         if resp["conversation_id"]:
             user['conversation_id'] = resp["conversation_id"]
@@ -74,11 +74,11 @@ class ChatGPT:
                 resp = data
         except Error as e:
             if e.code == 2:
-                log.warning("频率限制", e)
+                log.warning(f"频率限制 {e}")
                 return "我被限制了哦，你可以等一个小时后再来"
         except Exception as e:
-            print('ChatGPT：我坏了', e)
-            log.critical("严重故障: ", e)
+            print(f'ChatGPT：我坏了 {e}')
+            log.critical(f"严重故障: {e}")
             raise e
 
         return resp
