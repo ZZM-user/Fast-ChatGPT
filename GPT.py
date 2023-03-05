@@ -1,19 +1,11 @@
 import timeit
 import uuid
-from ssl import SSLEOFError
 
 from nb_log import get_logger
 from retrying import retry
 from revChatGPT.V1 import Error, Chatbot
 
 log = get_logger("GPT")
-
-
-# 判断错误
-def is_error(exception):
-    log.debug("判断异常", exception)
-    print(isinstance(exception, (SSLEOFError, IOError, ConnectionError)))
-    return isinstance(exception, (SSLEOFError, IOError, ConnectionError))
 
 
 class ChatGPT:
@@ -59,7 +51,15 @@ class ChatGPT:
         log.critical(f"故障排查: {resp}")
         return ""
 
-    @retry(retry_on_exception=is_error, stop_max_attempt_number=3)
+    @retry(
+        stop_max_attempt_number=5,
+        # 最大延迟时间
+        stop_max_delay=15000,
+        # 重试停留时间
+        wait_random_min=600,
+        wait_random_max=3000,
+        # 每调一次+1000ms
+        wait_incrementing_increment=1000)
     def request(
             self,
             user: dict,
