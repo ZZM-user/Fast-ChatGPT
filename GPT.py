@@ -11,7 +11,7 @@ class ChatGPT:
         "email": "z2657272578@gmail.com",
         "password": "ZJL20010516",
         "proxy": "127.0.0.1:7890",
-        "paid": True
+        # "paid": True
         # "email": "372551896@qq.com",
         # "password": "xlh981010"
     })
