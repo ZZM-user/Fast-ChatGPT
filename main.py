@@ -19,9 +19,9 @@ class Item(BaseModel):
 async def talk(
         item: Item
 ):
-    print(item)
     item.prompt = item.prompt.strip()
-
+    print(item)
+    
     if item.prompt.startswith("bing"):
         prompt = item.prompt.removeprefix("bing")
         answer = bingChat.talk(prompt)
