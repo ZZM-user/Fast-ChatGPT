@@ -52,14 +52,12 @@ class ChatGPT:
         return ""
 
     @retry(
-        stop_max_attempt_number=5,
-        # 最大延迟时间
-        stop_max_delay=15000,
+        stop_max_attempt_number=6,
         # 重试停留时间
         wait_random_min=600,
         wait_random_max=3000,
-        # 每调一次+1000ms
-        wait_incrementing_increment=1000)
+        # 每调一次+500ms
+        wait_incrementing_increment=100)
     def request(
             self,
             user: dict,
