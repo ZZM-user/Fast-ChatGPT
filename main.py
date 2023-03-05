@@ -2,10 +2,12 @@ import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from GPT import ChatGPT
+from BingChat import BingChat
+from ChatGPT import ChatGPT
 
 app = FastAPI()
 chatGPT = ChatGPT()
+bingChat = BingChat()
 
 
 class Item(BaseModel):
@@ -18,7 +20,14 @@ async def talk(
         item: Item
 ):
     print(item)
-    answer = chatGPT.talk(item.sender, item.prompt)
+    item.prompt = item.prompt.strip()
+
+    if item.prompt.startswith("bing"):
+        prompt = item.prompt.removeprefix("bing")
+        answer = bingChat.talk(prompt)
+    else:
+        answer = chatGPT.talk(item.sender, item.prompt)
+
     return {'answer': answer}
 
 
