@@ -1,7 +1,7 @@
 import timeit
 import uuid
-from ssl import SSLEOFError
 
+from _ssl import SSLEOFError
 from loguru import logger as log
 from retrying import retry
 from revChatGPT.V1 import Error, Chatbot
@@ -66,6 +66,7 @@ class ChatGPT:
                     prompt, user['conversation_id'], user['parent_id']
             ):
                 # 流式的 1->12->123
+                log.debug(data)
                 resp = data
         except Error as e:
             if e.code == 2:
