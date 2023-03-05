@@ -77,7 +77,6 @@ class ChatGPT:
                 log.warning(f"频率限制 {e}")
                 return "我被限制了哦，你可以等一个小时后再来"
         except Exception as e:
-            print(f'ChatGPT：我坏了 {e}')
             log.critical(f"严重故障: {e}")
             raise e
 
