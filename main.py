@@ -1,9 +1,11 @@
 import uvicorn
 from fastapi import FastAPI
+from loguru import logger as log
 from pydantic import BaseModel
 
 from ChatGPT import ChatGPT
 
+log.add('log/main_runtime_{time}.log', rotation='1 day', encoding='utf-8')
 app = FastAPI()
 chatGPT = ChatGPT()
 
@@ -16,12 +18,13 @@ class Item(BaseModel):
     prompt: str
 
 
+@log.catch
 @app.post("/ChatGPT/api")
 async def talk(
         item: Item
 ):
     item.prompt = item.prompt.strip()
-    print(item)
+    log.debug(item)
 
     # if item.prompt.startswith("bing"):
     #     prompt = item.prompt.removeprefix("bing")

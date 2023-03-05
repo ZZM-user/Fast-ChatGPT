@@ -1,11 +1,11 @@
 import timeit
 import uuid
 
-from nb_log import get_logger
+from loguru import logger as log
 from retrying import retry
 from revChatGPT.V1 import Error, Chatbot
 
-log = get_logger("GPT")
+log.add('log/ChatGPT_runtime_{time}.log', rotation='1 day', encoding='utf-8')
 
 
 class ChatGPT:
@@ -20,6 +20,7 @@ class ChatGPT:
         # "password": "xlh981010"
     })
 
+    @log.catch
     def talk(
             self,
             sender: str,
@@ -51,6 +52,7 @@ class ChatGPT:
         log.critical(f"故障排查: {resp}")
         return ""
 
+    @log.catch
     @retry(stop_max_attempt_number=6)
     def request(
             self,
