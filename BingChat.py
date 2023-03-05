@@ -3,7 +3,7 @@ import asyncio
 from EdgeGPT import Chatbot, ConversationStyle
 from loguru import logger as log
 
-log.add('log/BingChat_runtime_{time}.log', rotation='1 day', encoding='utf-8')
+log.add('log/BingChat_runtime_{time}.log', rotation='1 week', encoding='utf-8')
 
 
 class BingChat:

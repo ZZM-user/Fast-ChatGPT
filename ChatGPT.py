@@ -1,12 +1,11 @@
 import timeit
 import uuid
 
-from _ssl import SSLEOFError
 from loguru import logger as log
 from retrying import retry
 from revChatGPT.V1 import Error, Chatbot
 
-log.add('log/ChatGPT_runtime_{time}.log', rotation='1 day', encoding='utf-8')
+log.add('log/ChatGPT_runtime_{time}.log', rotation='1 week', encoding='utf-8')
 
 
 class ChatGPT:
@@ -66,17 +65,14 @@ class ChatGPT:
                     prompt, user['conversation_id'], user['parent_id']
             ):
                 # 流式的 1->12->123
-                log.trace(data["message"])
+                log.debug(data["message"])
                 resp = data
         except Error as e:
             if e.code == 2:
                 log.warning(f"频率限制 {e}")
                 return "我被限制了哦，你可以等一个小时后再来"
-        except SSLEOFError as ssl:
-            log.error(f"网络波动: {ssl}")
-            raise ssl
         except Exception as e:
-            log.critical(f"严重故障: {e}")
+            log.critical(f"发现故障: {e}")
             raise e
 
         return resp

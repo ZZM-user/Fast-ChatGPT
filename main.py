@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 from ChatGPT import ChatGPT
 
-log.add('log/main_runtime_{time}.log', rotation='1 day', encoding='utf-8')
+log.add('log/main_runtime_{time}.log', rotation='1 week', encoding='utf-8')
 app = FastAPI()
 chatGPT = ChatGPT()
 
