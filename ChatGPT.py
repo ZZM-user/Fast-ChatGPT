@@ -1,3 +1,4 @@
+import sys
 import timeit
 import uuid
 
@@ -46,7 +47,7 @@ class ChatGPT:
             user['parent_id'] = resp["parent_id"]
             # print(resp)
             message_ = resp["message"]
-            log.info(f'ChatGPT：{message_}')
+            log.success(f'ChatGPT：{message_}')
             return message_
 
         log.critical(f"故障排查: {resp}")
@@ -65,7 +66,7 @@ class ChatGPT:
                     prompt, user['conversation_id'], user['parent_id']
             ):
                 # 流式的 1->12->123
-                log.debug(data["message"])
+                self.flush(data["message"])
                 resp = data
         except Error as e:
             if e.code == 2:
@@ -76,6 +77,12 @@ class ChatGPT:
             raise e
 
         return resp
+
+    def flush(self, msg):
+        sys.stdout.write(' ' * 10 + 'r')
+        sys.stdout.flush()
+        sys.stdout.write(msg + 'r')
+        sys.stdout.flush()
 
 
 if __name__ == '__main__':
