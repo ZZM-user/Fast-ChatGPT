@@ -51,13 +51,7 @@ class ChatGPT:
         log.critical(f"故障排查: {resp}")
         return ""
 
-    @retry(
-        stop_max_attempt_number=6,
-        # 重试停留时间
-        wait_random_min=600,
-        wait_random_max=3000,
-        # 每调一次+500ms
-        wait_incrementing_increment=100)
+    @retry(stop_max_attempt_number=6)
     def request(
             self,
             user: dict,
