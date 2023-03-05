@@ -4,7 +4,7 @@ from ssl import SSLEOFError
 
 from nb_log import get_logger
 from retrying import retry
-from revChatGPT.V1 import Error, AsyncChatbot
+from revChatGPT.V1 import Error, Chatbot
 
 log = get_logger("GPT")
 
@@ -19,10 +19,10 @@ def is_error(exception):
 class ChatGPT:
     _userSet = {}
     _userDict = {'conversation_id': None, 'parent_id': None}
-    _chatbot = AsyncChatbot(config={
+    _chatbot = Chatbot(config={
         "email": "z2657272578@gmail.com",
         "password": "ZJL20010516",
-        "proxy": "http://127.0.0.1:7890",
+        # "proxy": "127.0.0.1:7890",
         # "paid": True
         # "email": "372551896@qq.com",
         # "password": "xlh981010"
