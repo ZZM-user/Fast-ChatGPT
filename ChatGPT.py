@@ -53,7 +53,7 @@ class ChatGPT:
         return ""
 
     @log.catch
-    @retry(stop_max_attempt_number=6)
+    @retry(stop_max_attempt_number=10)
     def request(
             self,
             user: dict,
