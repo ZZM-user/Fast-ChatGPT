@@ -54,9 +54,10 @@ class ChatGPT:
             # print(resp)
             message_ = resp["message"]
             log.info('ChatGPT：' + message_)
-        else:
-            log.critical("故障排查: ", resp)
-            return ""
+            return message_
+
+        log.critical("故障排查: ", resp)
+        return ""
 
     @retry(retry_on_exception=is_error, stop_max_attempt_number=3)
     def request(
