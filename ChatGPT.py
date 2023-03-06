@@ -32,9 +32,13 @@ class ChatGPT:
             self._chatbot.conversation_id = None
             self._chatbot.parent_id = str(uuid.uuid4())
             self._userSet[sender] = copy
-            return self.init_rule(copy)
+            # return self.init_rule(copy)
 
         user = self._userSet.get(sender)
+
+        # 选择性重置
+        if prompt == "瑟瑟":
+            return self.init_rule(user)
 
         start = timeit.default_timer()
         # 中间写代码块
