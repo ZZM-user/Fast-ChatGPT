@@ -27,7 +27,7 @@ class ChatGPT:
             prompt: str
     ) -> str:
 
-        if prompt == "重置" | sender not in self._userSet:
+        if prompt == "重置" or sender not in self._userSet:
             copy = self._userDict.copy()
             self._chatbot.conversation_id = None
             self._chatbot.parent_id = str(uuid.uuid4())
