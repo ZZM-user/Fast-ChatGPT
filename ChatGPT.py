@@ -32,7 +32,7 @@ class ChatGPT:
             self._chatbot.conversation_id = None
             self._chatbot.parent_id = str(uuid.uuid4())
             self._userSet[sender] = copy
-            self.init_rule(copy)
+            return self.init_rule(copy)
 
         user = self._userSet.get(sender)
 
