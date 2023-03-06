@@ -54,7 +54,6 @@ class ChatGPT:
             else:
                 log.debug("普通模式")
                 prompt = prompt
-            return self.init_rule(copy, prompt)
 
         user = self._userSet.get(sender)
 
@@ -74,19 +73,6 @@ class ChatGPT:
 
         log.critical(f"故障排查: {resp}")
         return ""
-
-    @log.catch
-    @retry(stop_max_attempt_number=5)
-    def init_rule(self, user: dict, rule: str):
-        log.debug("初始化开始")
-        resp = self.request(user, prompt=rule)
-        if resp and resp["conversation_id"]:
-            user['conversation_id'] = resp["conversation_id"]
-            user['parent_id'] = resp["parent_id"]
-            # print(resp)
-            message_ = resp["message"]
-            log.debug("初始化结束")
-            return message_
 
     @log.catch
     @retry(stop_max_attempt_number=10)
