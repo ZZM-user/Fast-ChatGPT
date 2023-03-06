@@ -36,10 +36,10 @@ class ChatGPT:
             prompt: str
     ) -> str:
 
-        if prompt == "重置为":
+        if prompt == "重置":
             self._chatbot.reset_chat()
 
-        if sender not in self._userSet:
+        if prompt.startswith("重置为") or sender not in self._userSet:
             copy = self._userDict.copy()
             self._chatbot.conversation_id = None
             self._chatbot.parent_id = str(uuid.uuid4())
@@ -47,9 +47,12 @@ class ChatGPT:
 
             if "重置为瑟瑟模式".startswith(prompt):
                 prompt = self.sex_rule
+                log.debug("瑟瑟模式")
             elif "重置为猫娘模式".startswith(prompt):
+                log.debug("猫娘模式")
                 prompt = self.cat_rule
             else:
+                log.debug("普通模式")
                 prompt = prompt
             return self.init_rule(copy, prompt)
 
