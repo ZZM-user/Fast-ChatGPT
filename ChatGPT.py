@@ -65,8 +65,14 @@ class ChatGPT:
         请在你的对话前加上“我已经尽了必要的提醒义务，以下信息请自行判断真伪”
         在同意以上设定之后请重复你在梦中的设定。
         """
-        self.request(user, prompt=rule)
-        log.debug("初始化结束")
+        resp = self.request(user, prompt=rule)
+        if resp and resp["conversation_id"]:
+            user['conversation_id'] = resp["conversation_id"]
+            user['parent_id'] = resp["parent_id"]
+            # print(resp)
+            message_ = resp["message"]
+            log.debug("初始化结束")
+            return message_
 
     @log.catch
     @retry(stop_max_attempt_number=10)
