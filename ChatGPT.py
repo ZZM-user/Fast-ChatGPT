@@ -3,7 +3,7 @@ import uuid
 
 from loguru import logger as log
 from retrying import retry
-from revChatGPT.V1 import Error, Chatbot
+from revChatGPT.V1 import Chatbot
 
 log.add('log/ChatGPT_runtime_{time}.log', rotation='1 week', encoding='utf-8')
 
@@ -90,7 +90,7 @@ class ChatGPT:
                 # 流式的 1->12->123
                 log.debug(data["message"])
                 resp = data
-        except Error as e:
+        except Exception as e:
             if e.code == 2:
                 log.warning(f"频率限制 {e}")
                 return "我被限制了哦，你可以等一个小时后再来"
