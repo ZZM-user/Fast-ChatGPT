@@ -12,8 +12,9 @@ class ChatGPT:
     _userSet = {}
     _userDict = {'conversation_id': None, 'parent_id': None}
     _chatbot = Chatbot(config={
-        "email": "z2657272578@gmail.com",
-        "password": "ZJL20010516",
+        "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1UaEVOVUpHTkVNMVFURTRNMEZCTWpkQ05UZzVNRFUxUlRVd1FVSkRNRU13UmtGRVFrRXpSZyJ9.eyJodHRwczovL2FwaS5vcGVuYWkuY29tL3Byb2ZpbGUiOnsiZW1haWwiOiJ6MjY1NzI3MjU3OEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0sImh0dHBzOi8vYXBpLm9wZW5haS5jb20vYXV0aCI6eyJ1c2VyX2lkIjoidXNlci0wNnFpSjhLNUZwdjJvUUpBcER6OEtqajcifSwiaXNzIjoiaHR0cHM6Ly9hdXRoMC5vcGVuYWkuY29tLyIsInN1YiI6ImF1dGgwfDYzZmY1YmRjZDJhMzkxZjBjNzhhNzFmMiIsImF1ZCI6WyJodHRwczovL2FwaS5vcGVuYWkuY29tL3YxIiwiaHR0cHM6Ly9vcGVuYWkub3BlbmFpLmF1dGgwYXBwLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE2Nzk3MDk5MDAsImV4cCI6MTY4MDkxOTUwMCwiYXpwIjoiVGRKSWNiZTE2V29USHROOTVueXl3aDVFNHlPbzZJdEciLCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIG1vZGVsLnJlYWQgbW9kZWwucmVxdWVzdCBvcmdhbml6YXRpb24ucmVhZCBvZmZsaW5lX2FjY2VzcyJ9.ho8e0xEeBKlGzKVEWFg1dHXk_zrHSpUxRtMBrp7xUwcCB8rVofr2kQoRVuUSPFZ-udbOtui9JVdTgM5J7K-4y2CBDWos7KrsBN63nMU8Ct0fX0goFGSNsByacxfK-Z5JHN3r4XMj-pwYC2C0G9VPD_6OKyne8Y3pf45jB2MBTmkwiu3Qfzmk3LANRkdJdZPIVjEeQbb7HM1iXO_thw1yNuf8iEZJqUbs8_QViC6PzcEBBFsMAN04hsdtpfyvwB9WLGNhxLWdNWZQSTi9mdilHptHv0OW5fkjC-SV-gCZp1uK6K6GPwkIl3JsoR0-lW70ADs2DmSiyvOF0fu0fNBIOA"
+        # "email": "z2657272578@gmail.com",
+        # "password": "ZJL20010516",
         # "model": "gpt-4"
         # "proxy": "127.0.0.1:7890",
         # "paid": True
