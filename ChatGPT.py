@@ -49,7 +49,6 @@ class ChatGPT:
 
         if prompt.startswith("重置为") or sender not in self._userSet:
             copy = self._userDict.copy()
-            copy.setdefault("dev", False)
             self._chatbot.conversation_id = None
             self._chatbot.parent_id = str(uuid.uuid4())
             self._userSet[sender] = copy
