@@ -104,6 +104,7 @@ class ChatGPT:
         try:
             resp = ''
             if user["version"] == 4:
+                log.debug("GPT4")
                 for data in self._chatbot_GPT4.ask(
                         prompt, user['conversation_id'], user['parent_id']
                 ):
@@ -111,6 +112,7 @@ class ChatGPT:
                     log.debug(data["message"])
                     resp = data
             else:
+                log.debug("GPT3.5")
                 for data in self._chatbot.ask(
                         prompt, user['conversation_id'], user['parent_id']
                 ):
