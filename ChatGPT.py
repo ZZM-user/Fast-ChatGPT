@@ -68,6 +68,7 @@ class ChatGPT:
             elif "重置为GPT4模式".startswith(prompt):
                 log.debug("GPT4模式")
                 copy["version"] = 4
+                prompt = "你好，你是谁"
             else:
                 log.debug("普通模式")
                 prompt = prompt
