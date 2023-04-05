@@ -103,7 +103,7 @@ class ChatGPT:
         try:
             resp = ''
             if user["version"] == 4:
-                for data in self._chatbot.ask(
+                for data in self._chatbot_GPT4.ask(
                         prompt, user['conversation_id'], user['parent_id']
                 ):
                     # 流式的 1->12->123
