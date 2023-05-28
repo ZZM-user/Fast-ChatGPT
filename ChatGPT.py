@@ -23,9 +23,9 @@ class ChatGPT:
         "model": "gpt-4"
     })
     _chatbot = Chatbot(config = {
-        "email": account,
-        "password": password
-        # "access_token": access_token,
+        # "email": account,
+        # "password": password
+        "access_token": access_token,
         # "model": "gpt-4"
         # "proxy": "127.0.0.1:7890",
         # "paid": True
