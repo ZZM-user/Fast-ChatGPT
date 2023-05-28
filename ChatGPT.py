@@ -1,3 +1,4 @@
+import os
 import timeit
 import uuid
 
@@ -5,19 +6,26 @@ from loguru import logger as log
 from retrying import retry
 from revChatGPT.V1 import Chatbot
 
-log.add('log/ChatGPT_runtime_{time}.log', rotation='1 week', encoding='utf-8')
+log.add('log/ChatGPT_runtime_{time}.log', rotation = '1 week', encoding = 'utf-8')
+
+account = os.environ.get("OPENAI_ACCOUNT")
+password = os.environ.get("OPENAI_PASSWORD")
+
+print(f"account: {account} - password: {password}")
 
 
 class ChatGPT:
     _userSet = {}
     _userDict = {'conversation_id': None, 'parent_id': None, "version": 3.5}
     access_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1UaEVOVUpHTkVNMVFURTRNMEZCTWpkQ05UZzVNRFUxUlRVd1FVSkRNRU13UmtGRVFrRXpSZyJ9.eyJodHRwczovL2FwaS5vcGVuYWkuY29tL3Byb2ZpbGUiOnsiZW1haWwiOiJ6MjY1NzI3MjU3OEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0sImh0dHBzOi8vYXBpLm9wZW5haS5jb20vYXV0aCI6eyJ1c2VyX2lkIjoidXNlci0wNnFpSjhLNUZwdjJvUUpBcER6OEtqajcifSwiaXNzIjoiaHR0cHM6Ly9hdXRoMC5vcGVuYWkuY29tLyIsInN1YiI6ImF1dGgwfDYzZmY1YmRjZDJhMzkxZjBjNzhhNzFmMiIsImF1ZCI6WyJodHRwczovL2FwaS5vcGVuYWkuY29tL3YxIiwiaHR0cHM6Ly9vcGVuYWkub3BlbmFpLmF1dGgwYXBwLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE2ODQ3NTc1MzcsImV4cCI6MTY4NTk2NzEzNywiYXpwIjoiVGRKSWNiZTE2V29USHROOTVueXl3aDVFNHlPbzZJdEciLCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIG1vZGVsLnJlYWQgbW9kZWwucmVxdWVzdCBvcmdhbml6YXRpb24ucmVhZCBvcmdhbml6YXRpb24ud3JpdGUifQ.bJhMVG17IwVAzOqRpIVtF95WLLYzVM-M3MLyQCrYXcb_GaiZTPtnYWGSkehSG2lcidjeisAqsUM6eulXCK-5IIpgjJT-kmG9AqijNwQ4d1XgQ0rpUpDy7EI7T0hdhCH3aI5mivW2PSGHJSGz4Rn-NkURiO6_1PhEh0ad2JxAwGkxMOhTtYvpnBqzScvj3zK9QsVIQU6by3nhTGV6RBHfDllVZpEBi1K6-7ddaCtAzoxiGZyAyKIR82SLOPtANcE2wkmirD1ySVhECbepkbiNzQJdsfPbWXm-h4xyenWqqeq6E-QRXqAbeFmCyFIgYX7NJhJpPApo40kUNaAqZWn3mw"
-    _chatbot_GPT4 = Chatbot(config={
+    _chatbot_GPT4 = Chatbot(config = {
         "access_token": access_token,
         "model": "gpt-4"
     })
-    _chatbot = Chatbot(config={
-        "access_token": access_token,
+    _chatbot = Chatbot(config = {
+        "email": account,
+        "password": password
+        # "access_token": access_token,
         # "model": "gpt-4"
         # "proxy": "127.0.0.1:7890",
         # "paid": True
@@ -113,7 +121,7 @@ class ChatGPT:
         return ""
 
     @log.catch
-    @retry(stop_max_attempt_number=10)
+    @retry(stop_max_attempt_number = 10)
     def request(
             self,
             bot: Chatbot,
