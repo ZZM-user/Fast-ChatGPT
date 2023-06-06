@@ -17,17 +17,17 @@ print(f"account: {account} - password: {password}")
 class ChatGPT:
     _userSet = {}
     _userDict = {'conversation_id': None, 'parent_id': None, "version": 3.5}
-    access_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1UaEVOVUpHTkVNMVFURTRNMEZCTWpkQ05UZzVNRFUxUlRVd1FVSkRNRU13UmtGRVFrRXpSZyJ9.eyJodHRwczovL2FwaS5vcGVuYWkuY29tL3Byb2ZpbGUiOnsiZW1haWwiOiJ6MjY1NzI3MjU3OEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0sImh0dHBzOi8vYXBpLm9wZW5haS5jb20vYXV0aCI6eyJ1c2VyX2lkIjoidXNlci0wNnFpSjhLNUZwdjJvUUpBcER6OEtqajcifSwiaXNzIjoiaHR0cHM6Ly9hdXRoMC5vcGVuYWkuY29tLyIsInN1YiI6ImF1dGgwfDYzZmY1YmRjZDJhMzkxZjBjNzhhNzFmMiIsImF1ZCI6WyJodHRwczovL2FwaS5vcGVuYWkuY29tL3YxIiwiaHR0cHM6Ly9vcGVuYWkub3BlbmFpLmF1dGgwYXBwLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE2ODQ3NTc1MzcsImV4cCI6MTY4NTk2NzEzNywiYXpwIjoiVGRKSWNiZTE2V29USHROOTVueXl3aDVFNHlPbzZJdEciLCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIG1vZGVsLnJlYWQgbW9kZWwucmVxdWVzdCBvcmdhbml6YXRpb24ucmVhZCBvcmdhbml6YXRpb24ud3JpdGUifQ.bJhMVG17IwVAzOqRpIVtF95WLLYzVM-M3MLyQCrYXcb_GaiZTPtnYWGSkehSG2lcidjeisAqsUM6eulXCK-5IIpgjJT-kmG9AqijNwQ4d1XgQ0rpUpDy7EI7T0hdhCH3aI5mivW2PSGHJSGz4Rn-NkURiO6_1PhEh0ad2JxAwGkxMOhTtYvpnBqzScvj3zK9QsVIQU6by3nhTGV6RBHfDllVZpEBi1K6-7ddaCtAzoxiGZyAyKIR82SLOPtANcE2wkmirD1ySVhECbepkbiNzQJdsfPbWXm-h4xyenWqqeq6E-QRXqAbeFmCyFIgYX7NJhJpPApo40kUNaAqZWn3mw"
-    _chatbot_GPT4 = Chatbot(config = {
-        "access_token": access_token,
-        "model": "gpt-4"
-    })
+    access_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1UaEVOVUpHTkVNMVFURTRNMEZCTWpkQ05UZzVNRFUxUlRVd1FVSkRNRU13UmtGRVFrRXpSZyJ9.eyJodHRwczovL2FwaS5vcGVuYWkuY29tL3Byb2ZpbGUiOnsiZW1haWwiOiJ6MjY1NzI3MjU3OEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0sImh0dHBzOi8vYXBpLm9wZW5haS5jb20vYXV0aCI6eyJhbXIiOlsibWZhIl0sInVzZXJfaWQiOiJ1c2VyLTA2cWlKOEs1RnB2Mm9RSkFwRHo4S2pqNyJ9LCJpc3MiOiJodHRwczovL2F1dGgwLm9wZW5haS5jb20vIiwic3ViIjoiYXV0aDB8NjNmZjViZGNkMmEzOTFmMGM3OGE3MWYyIiwiYXVkIjpbImh0dHBzOi8vYXBpLm9wZW5haS5jb20vdjEiLCJodHRwczovL29wZW5haS5vcGVuYWkuYXV0aDBhcHAuY29tL3VzZXJpbmZvIl0sImlhdCI6MTY4NjA2MDUzNSwiZXhwIjoxNjg3MjcwMTM1LCJhenAiOiJUZEpJY2JlMTZXb1RIdE45NW55eXdoNUU0eU9vNkl0RyIsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwgbW9kZWwucmVhZCBtb2RlbC5yZXF1ZXN0IG9yZ2FuaXphdGlvbi5yZWFkIG9yZ2FuaXphdGlvbi53cml0ZSJ9.Um-WsthrSHptX489Czly3La164b7Bb3OpV44hKThIcH5Yr-8vyDBGqdOpx-JbhLEqutuFyTieTm6O93-w6N4XOMRRQPQubpEPZZRU7Q6gIBvjDeEp9VQE20zTS9A3-TRsUIa7HH4rPgGjuywdslxVatawkuHCW2j_Bmhg49ajLEtxgB-X_Rn2GEyVKdJL298CDvHriFdk7KWFkWjKAezelc4QgHxdJ0E5nQBhouZ8x_sRteGjUeiaN76ScTcenETeTp3Tu7rWjQ1deV0F0HNDwIZqJL6tSpbpMXR9NbXSLP5rudzgKb-FgrMNLo5R-7ZGrPXUp4lCHz7sA_i34wKAA"
+    # _chatbot_GPT4 = Chatbot(config = {
+    #     "access_token": access_token,
+    #     "model": "gpt-4"
+    # })
     _chatbot = Chatbot(config = {
-        # "email": account,
-        # "password": password
-        "access_token": access_token,
+        "email": account,
+        "password": password,
+        # "access_token": access_token,
         # "model": "gpt-4"
-        # "proxy": "127.0.0.1:7890",
+        "proxy": "127.0.0.1:7890",
         # "paid": True
     })
 
@@ -98,10 +98,11 @@ class ChatGPT:
         # 推测用户版本
         if user["version"] == 4:
             log.debug("GPT4")
-            bot = self._chatbot_GPT4
+            # bot = self._chatbot_GPT4
         else:
             log.debug("GPT3.5")
-            bot = self._chatbot
+
+        bot = self._chatbot
 
         start = timeit.default_timer()
         # 中间写代码块
