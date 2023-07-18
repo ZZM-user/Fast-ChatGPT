@@ -1,22 +1,24 @@
 import asyncio
 
-from EdgeGPT import Chatbot, ConversationStyle
+from EdgeGPT.EdgeGPT import Chatbot, ConversationStyle
 from loguru import logger as log
 
-log.add('log/BingChat_runtime_{time}.log', rotation='1 week', encoding='utf-8')
+log.add('log/BingChat_runtime_{time}.log', rotation = '1 week', encoding = 'utf-8')
 
 
 class BingChat:
     @log.catch
     async def talk(self, prompt):
-        bot = Chatbot(cookiePath='./cookie.json')
-        resp = await bot.ask(prompt=prompt, conversation_style=ConversationStyle.creative)
-        msg_list = resp.get("item").get("messages")
-        message_ = msg_list[1].get('text')
-        log.debug(message_)
-        await bot.close()
+        bot = await Chatbot.create()  # Passing cookies is "optional", as explained above
+        response = await bot.ask(prompt = prompt, conversation_style = ConversationStyle.creative,
+                                 simplify_response = True)
+        print(response.get('text'))  # Returns
+        # await bot.close()
+        return response.get('text')
 
 
 if __name__ == "__main__":
     bing = BingChat()
-    asyncio.run(bing.talk("你好"))
+    while True:
+        an = input("you: ")
+        asyncio.run(bing.talk(an))

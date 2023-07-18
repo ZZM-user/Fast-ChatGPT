@@ -3,9 +3,10 @@ from fastapi import FastAPI
 from loguru import logger as log
 from pydantic import BaseModel
 
+from BingChat import BingChat
 from ChatGPT import ChatGPT
 
-log.add('log/main_runtime_{time}.log', rotation='1 week', encoding='utf-8')
+log.add('log/main_runtime_{time}.log', rotation = '1 week', encoding = 'utf-8')
 app = FastAPI()
 chatGPT = ChatGPT()
 
@@ -18,6 +19,9 @@ class Item(BaseModel):
     prompt: str
 
 
+bing = BingChat()
+
+
 @log.catch
 @app.post("/ChatGPT/api")
 async def talk(
@@ -26,15 +30,15 @@ async def talk(
     item.prompt = item.prompt.strip()
     log.debug(item)
 
-    # if item.prompt.startswith("bing"):
-    #     prompt = item.prompt.removeprefix("bing")
-    #     print(prompt)
-    #     answer = bingChat.talk(prompt)
-    # else:
-    answer = chatGPT.talk(item.sender, item.prompt)
+    if item.prompt.startswith("bing"):
+        prompt = item.prompt.removeprefix("bing")
+        print(prompt)
+        answer = bingChat.talk(prompt)
+    else:
+        answer = chatGPT.talk(item.sender, item.prompt)
 
     return {'answer': answer}
 
 
 if __name__ == '__main__':
-    uvicorn.run("main:app", host="0.0.0.0", port=8459, reload=True)
+    uvicorn.run("main:app", host = "0.0.0.0", port = 8459, reload = True)
