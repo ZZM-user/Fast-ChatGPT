@@ -27,7 +27,7 @@ class ChatGPT:
         "password": password,
         # "access_token": access_token,
         "model": "gpt-4-mobile",
-        "proxy": "127.0.0.1:7890",
+        # "proxy": "127.0.0.1:7890",
         # "paid": True
     })
 
