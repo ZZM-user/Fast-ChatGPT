@@ -1,44 +1,26 @@
-import uvicorn
-from fastapi import FastAPI
-from loguru import logger as log
-from pydantic import BaseModel
-
-from BingChat import BingChat
-from ChatGPT import ChatGPT
-
-log.add('log/main_runtime_{time}.log', rotation = '1 week', encoding = 'utf-8')
-app = FastAPI()
-chatGPT = ChatGPT()
+import gradio as gr
 
 
-# bingChat = BingChat()
-
-
-class Item(BaseModel):
-    sender: str
-    prompt: str
-
-
-bing = BingChat()
-
-
-@log.catch
-@app.post("/ChatGPT/api")
-async def talk(
-        item: Item
-):
-    item.prompt = item.prompt.strip()
-    log.debug(item)
-
-    if item.prompt.startswith("bing"):
-        prompt = item.prompt.removeprefix("bing")
-        print(prompt)
-        answer = bingChat.talk(prompt)
+def talk_methods(message, history):
+    if message.endswith("?"):
+        return "Yes"
     else:
-        answer = chatGPT.talk(item.sender, item.prompt)
+        return "Ask me anything!"
 
-    return {'answer': answer}
 
+gr.ChatInterface(
+    talk_methods,
+    chatbot = gr.Chatbot(height = 300),
+    textbox = gr.Textbox(placeholder = "此时此刻，请你说", container = False, scale = 7),
+    title = "Fast Chat",
+    description = "可能我会帮助你推荐一些你需要的书籍……",
+    theme = "soft",
+    examples = ["我喜欢看大主宰", "有天蚕土豆的作品吗？", "我想看都市一类的小说"],
+    cache_examples = True,
+    retry_btn = None,
+    undo_btn = "撤回",
+    clear_btn = "清空",
+).launch()
 
 if __name__ == '__main__':
-    uvicorn.run("main:app", host = "0.0.0.0", port = 8459, reload = True)
+    gr.load()
