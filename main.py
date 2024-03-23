@@ -1,26 +1,32 @@
-import gradio as gr
+import uvicorn
+from fastapi import FastAPI
+from loguru import logger as log
+from pydantic import BaseModel
+
+from common.llm import tongYi
+
+log.add('log/main_runtime_{time}.log', rotation = '1 week', encoding = 'utf-8')
+app = FastAPI()
 
 
-def talk_methods(message, history):
-    if message.endswith("?"):
-        return "Yes"
-    else:
-        return "Ask me anything!"
+class Item(BaseModel):
+    sender: str
+    prompt: str
 
 
-gr.ChatInterface(
-    talk_methods,
-    chatbot = gr.Chatbot(height = 300),
-    textbox = gr.Textbox(placeholder = "此时此刻，请你说", container = False, scale = 7),
-    title = "Fast Chat",
-    description = "可能我会帮助你推荐一些你需要的书籍……",
-    theme = "soft",
-    examples = ["我喜欢看大主宰", "有天蚕土豆的作品吗？", "我想看都市一类的小说"],
-    cache_examples = True,
-    retry_btn = None,
-    undo_btn = "撤回",
-    clear_btn = "清空",
-).launch()
+@log.catch
+@app.post("/ChatGPT/api")
+async def talk(
+        item: Item
+):
+    item.prompt = item.prompt.strip()
+    log.debug(item)
+
+    answer = await tongYi.TongYi().talk(item.sender, item.prompt)
+
+    log.debug(answer)
+    return {'answer': answer}
+
 
 if __name__ == '__main__':
-    gr.load()
+    uvicorn.run("main:app", host = "0.0.0.0", port = 8459, reload = True)
