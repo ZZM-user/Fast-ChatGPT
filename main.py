@@ -22,7 +22,7 @@ async def talk(
     item.prompt = item.prompt.strip()
     log.debug(item)
 
-    answer = await tongYi.TongYi().talk(item.sender, item.prompt)
+    answer = tongYi.TongYi().talk(item.sender, item.prompt)
 
     log.debug(answer)
     return {'answer': answer}
