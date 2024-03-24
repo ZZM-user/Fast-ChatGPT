@@ -1,0 +1,8 @@
+dashscope
+langchain
+fastapi
+uvicorn
+loguru
+pydantic
+mysqlclient
+redis
