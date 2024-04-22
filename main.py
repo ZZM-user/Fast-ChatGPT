@@ -34,6 +34,12 @@ async def talk(
 
 
 @log.catch
+@app.get("/health")
+async def health():
+    return 'I am OK'
+
+
+@log.catch
 @app.get("/clear")
 async def talk(sender: str):
     log.info("请求清除历史记录：{}".format(sender))
