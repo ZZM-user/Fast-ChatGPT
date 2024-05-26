@@ -15,9 +15,8 @@ class TongYi:
     当前地点：中国重庆
     ---历史聊天记录---
     {{chat_history}}
-    ---对话内容---
-    人类: {{human_input}}
-    机器人:
+    ---当前对话内容如下---
+    {{human_input}}
     """
 
     _base_prompt = PromptTemplate(
