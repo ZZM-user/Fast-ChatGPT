@@ -1,24 +1,21 @@
 from urllib.parse import urlparse
 
 import redis
-from langchain.memory import ConversationBufferMemory
 from langchain_community.chat_message_histories.redis import RedisChatMessageHistory
+from langchain_core.chat_history import BaseChatMessageHistory
 
 from common import configReader
 
 redis_url = configReader.ReadConfigFile().read_config("redis", "url")
+store = {}
 
 
-def get_history(sender: str) -> RedisChatMessageHistory:
-    message_history = RedisChatMessageHistory(
-        url = redis_url, ttl = 1800, session_id = sender
-    )
-
-    memory = ConversationBufferMemory(
-        memory_key = "chat_history", chat_memory = message_history
-    )
-
-    return memory
+def get_session_history(session_id: str) -> BaseChatMessageHistory:
+    if session_id not in store:
+        store[session_id] = RedisChatMessageHistory(session_id = session_id,
+                                                    url = redis_url,
+                                                    ttl = 10000)
+    return store[session_id]
 
 
 def get_redis() -> redis.Redis:
@@ -33,5 +30,5 @@ def get_redis() -> redis.Redis:
 
 def clear_history(sender: str):
     get_redis().delete(sender)
-    history = get_history(sender)
+    history = get_session_history(sender)
     history.clear()

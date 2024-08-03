@@ -6,3 +6,5 @@ loguru
 pydantic
 mysqlclient
 redis
+langchain-community
+langchain-core

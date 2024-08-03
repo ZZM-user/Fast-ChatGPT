@@ -1,40 +1,48 @@
 from datetime import datetime
 
-from langchain.chains.llm import LLMChain
 from langchain.chat_models.tongyi import ChatTongyi
-from langchain_core.prompts import PromptTemplate
+from langchain_core.messages import HumanMessage
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables.history import RunnableWithMessageHistory
 
-from common.memory import memoryUtil
+from common.memory.memoryUtil import get_session_history
+
+
+def get_prompt_template():
+    return f"""
+    以下是你的资料：
+    
+    名字: 小度
+    背景知识:
+    当前世界时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}，星期{datetime.now().weekday() + 1}
+    当前地点: 中国重庆
+    """
+
+
+input_message = """
+        {human_input}
+"""
 
 
 class TongYi:
-    _template = f"""
-    ---背景知识--
-    你的名字：小度
-    当前世界时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-    当前地点：中国重庆
-    ---历史聊天记录---
-    {{chat_history}}
-    ---当前对话内容如下---
-    {{human_input}}
-    """
+    prompt_template = ChatPromptTemplate.from_messages([
+        ("system", get_prompt_template()),
+        ("user", input_message)
+    ])
 
-    _base_prompt = PromptTemplate(
-        input_variables = ["chat_history", "human_input"], template = _template
-    )
-
-    llm = ChatTongyi(model = "qwen-1.8b-chat", incremental_output = True)
-    llm_chain = LLMChain(
-        llm = llm,
-        prompt = _base_prompt,
-        verbose = True
-    )
+    model = ChatTongyi(model = "qwen-1.8b-chat", incremental_output = True)
+    chain = prompt_template | model
 
     def talk(self, sender: str, prompt: str):
-        memory = memoryUtil.get_history(sender)
+        answer = ""
 
-        self.llm_chain.memory = memory
+        config = {"configurable": {"session_id": sender}}
+        with_message_history = RunnableWithMessageHistory(self.model, get_session_history)
+        for r in with_message_history.stream(
+                [HumanMessage(content = prompt)],
+                config = config,
+        ):
+            print(r.content, end = "")
+            answer = answer + r.content
 
-        response = self.llm_chain.predict(human_input = prompt)
-
-        return response
+        return answer
