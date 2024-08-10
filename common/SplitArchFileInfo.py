@@ -8,7 +8,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
 from common import configReader
-from common.llm.tongYi import TongYi
+from common.llm.chatLLM import ChatLLM
 
 db_uri = configReader.ReadConfigFile().read_config("mysql", "uri")
 
@@ -39,7 +39,7 @@ prompt_template = """
 prompt = PromptTemplate(
     input_variables = ["book"], template = prompt_template
 )
-llm = LLMChain(llm = TongYi().llm, prompt = prompt)
+llm = LLMChain(llm = ChatLLM().llm, prompt = prompt)
 
 
 def is_valid_json_with_keys(json_string: dict, required_keys) -> bool:

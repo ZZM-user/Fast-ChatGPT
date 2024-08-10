@@ -3,11 +3,12 @@ from fastapi import FastAPI
 from loguru import logger as log
 from pydantic import BaseModel
 
-from common.llm import tongYi
+from common.llm import chatLLM
 from common.memory import memoryUtil
 
 log.add('log/main_runtime_{time}.log', rotation = '1 week', encoding = 'utf-8')
 app = FastAPI()
+llm = chatLLM.ChatLLM()
 
 
 class Item(BaseModel):
@@ -27,7 +28,7 @@ async def talk(
         memoryUtil.clear_history(item.sender)
         return {'answer': '好的，已经重新开始啦！'}
 
-    answer = tongYi.TongYi().talk(item.sender, item.prompt)
+    answer = llm.talk(item.sender, item.prompt)
 
     log.debug(answer)
     return {'answer': answer}
