@@ -1,8 +1,10 @@
 # 创建数据库引擎
 import json
+import time
 
 from langchain.chains.llm import LLMChain
-from langchain_core.prompts import PromptTemplate
+from langchain_core.messages import SystemMessage
+from langchain_core.prompts import PromptTemplate, MessagesPlaceholder, ChatPromptTemplate
 from loguru import logger as log
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
@@ -21,56 +23,145 @@ DBSession = sessionmaker(bind = engine)
 session = DBSession()
 
 prompt_template = """
-请你将文件名按照指定要求拆解，并只返回一个json格式的对象，
----
-示例：
-输入：[废文 完结]雀归巢 作者：黄金圣斗士.txt
-输出格式：
+# 身份
+    书籍信息提取师
+    
+# 任务
+    将文件名按照指定要求拆解，尽可能拆解出文件名中附带的书籍信息，比如作者，书名，相似的标签，文件后缀。
+    请展开你的想象力，尽可能的从其中找出这些信息填充进去。
+    如果无法拆分时，请确保书名必须要有
+
+# 返回格式
+```json
 {{
- "author": "黄金圣斗士",
- "bookName": "雀归巢",
- "tags": ["废文","完结"],
- "fileType": "txt"
+ "bookName": "",
+ "author": "",
+ "tags": [],
+ "fileType": ""
 }}
----
-现在的文件名是：{book}
-输出：
+```
+
+# 参考示例
+    ---
+    示例1：
+    输入：作者：远上白云间.zip
+    输出：{{
+     "bookName": "作者：远上白云间",
+     "author": "远上白云间",
+     "tags": [],
+     "fileType": "zip"
+    }}
+    ---
+    示例2：
+    输入：《当渣受拥有假孕系统后》作者：月渡.txt
+    输出：{{
+     "bookName": "当渣受拥有假孕系统后",
+     "author": "月渡",
+     "tags": ['系统','渣受'],
+     "fileType": "txt"
+    }}
+    ---
+    示例3：
+    输入：[废文 完结]《两主相遇必有一被》作者：沥竹lzz.txt
+    输出：{{
+     "bookName": "两主相遇必有一被",
+     "author": "沥竹lzz",
+     "tags": ['废文','完结'],
+     "fileType": "txt"
+    }}
+    ---
+    示例4：
+    输入：[海棠]密室（1v1）yfzl密码yunfei.zip
+    输出：{{
+     "bookName": "密室（1v1）",
+     "author": "沥竹lzz",
+     "tags": ['海棠'],
+     "fileType": "zip"
+    }}
+    ---
+    示例5：
+    输入：没有人爱代小京.zip
+    输出：{{
+     "bookName": "没有人爱代小京",
+     "author": "",
+     "tags": [],
+     "fileType": "zip"
+    }}
+    ---
+    示例6：
+    输入：[完结+全番外]《批照错发给情敌之后（校园双性1v1 笨蛋美人学渣受x高冷闷骚学神攻）》作者：很好吃的糯米粽【补番】.zip
+    输出：{{
+     "bookName": "批照错发给情敌之后（校园双性1v1 笨蛋美人学渣受x高冷闷骚学神攻）",
+     "author": "很好吃的糯米粽",
+     "tags": ["完结", "全番外", "校园双性1v1", "笨蛋美人学渣受", "高冷闷骚学神攻"],
+     "fileType": "zip"
+    }}
+    ---
+    示例7：
+    输入：快穿：黑莲花的千层套路【泷川】 作者：止水之庭.txt
+    输出：{{
+     "bookName": "黑莲花的千层套路【泷川】",
+     "author": "止水之庭",
+     "tags": ["快穿"],
+     "fileType": "txt"
+    }}
+    ---
 """
-prompt = PromptTemplate(
-    input_variables = ["book"], template = prompt_template
+prompt = ChatPromptTemplate.from_messages(
+    [
+        SystemMessage(content = prompt_template),
+        ("user", "{book}")
+    ]
 )
-llm = LLMChain(llm = ChatLLM().llm, prompt = prompt)
+chain  = prompt | ChatLLM().llm
 
 
-def is_valid_json_with_keys(json_string: dict, required_keys) -> bool:
+def is_valid_json_with_keys(json_string: str, required_keys) -> dict|None:
     # 尝试将字符串转换为JSON对象
     try:
-        json_data = json.loads(json_string.get("text").replace("\\n", ""))
+        json_str = json_string.replace("```json", "").replace("```", "").replace("\n", "")
+        return json.loads(json_str)
     except (json.JSONDecodeError, TypeError):
-        return False  # 如果解析失败，则不是有效的JSON字符串
-
-    # 检查JSON对象中是否存在所有必需的键
-    for key in required_keys:
-        if not json_data.get(key):
-            return False  # 如果任意一个键不存在，则返回False
-
-    return True  # 所有键都存在于JSON对象中，且字符串是有效的JSON
-
+        return None  # 如果解析失败，则不是有效的JSON字符串
 
 # execute = session.execute(text("SELECT COUNT(1) FROM `archived_file`")).scalar()
 # print(execute)
-execute = session.execute(text("SELECT id,name FROM `archived_file` ORDER BY RAND() limit 10"))
+# execute = session.execute(text("SELECT id,name FROM `archived_file` ORDER BY RAND() limit 10"))
+execute = session.execute(text("SELECT id,name FROM `archived_file_copy1` where author is null and book_name is null and tags is null ORDER BY archive_date asc "))
 count = 0
 for row in execute:
-    print(row.name)
-    llm_invoke = llm.invoke({"book": row.name})
+    print(f'id:{row.id},name:{row.name}')
+    llm_invoke = chain.invoke(
+        {
+            "book": row.name,
+        }
+    )
     print(llm_invoke)
-    isOk = is_valid_json_with_keys(llm_invoke, ["author", "bookName", "tags", "fileType"])
-    if not isOk:
-        log.error(f"错了哦")
-        count = count + 1
-    print("-" * 10)
+    print(llm_invoke.content)
+    book_info = is_valid_json_with_keys(llm_invoke.content, ["author", "bookName", "tags", "fileType"])
+    if book_info:
+        # 修改数据库中的书名、作者和标签
+        tags_str = ','.join(book_info['tags'])
 
-log.error(f"错了{count}次")
+        # 使用参数化查询
+        session.execute(
+            text(
+                "UPDATE `archived_file_copy1` SET `book_name` = :book_name, `author` = :author, `tags` = :tags WHERE `id` = :row_id"
+            ),
+            {
+                "book_name": book_info['bookName'],
+                "author": book_info['author'],
+                "tags": '',
+                "row_id": str(row.id)
+            }
+        )
+        # 提交事务
+        session.commit()
+    count += 1
+    print("-" * 30)
+    # time.sleep(1)
+    print(count)
+
+log.success(f"ok:{count}")
 if __name__ == '__main__':
     pass

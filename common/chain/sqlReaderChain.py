@@ -4,7 +4,6 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 
 from common import configReader
-from common.llm import tongYi
 
 template = """根据下面的表结构，编写一个SQL查询来回答用户的问题:
 {schema}
@@ -23,7 +22,7 @@ SQL Query: {query}
 SQL Response: {response}"""
 prompt_response = ChatPromptTemplate.from_template(template)
 
-tongYiChat = tongYi.TongYi()
+tongYiChat = tongYi.ChatLLM()
 
 db_uri = configReader.ReadConfigFile().read_config("mysql", "uri")
 db = SQLDatabase.from_uri(db_uri)

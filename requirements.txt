@@ -9,3 +9,5 @@ redis
 langchain-community
 langchain-core
 transformers==4.30.2
+openai
+langchain-openai
